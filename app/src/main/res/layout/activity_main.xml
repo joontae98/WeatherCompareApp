@@ -4,11 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/main_text"
+        android:id="@+id/textview_main_jsontext"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="hi" />
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:layout_weight="0.9"
+        android:maxLines="100"
+        android:padding="15dp"
+        android:scrollbars="vertical"
+        android:scrollHorizontally="false"
+        android:singleLine="false"
+        android:text="" />
+
+    <Button
+        android:id="@+id/button_main_requestjson"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:layout_weight="0.1"
+        android:text="JSON 가져오기" />
 </LinearLayout>
