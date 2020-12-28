@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,15 +14,60 @@
         android:layout_weight="0.9"
         android:maxLines="100"
         android:padding="15dp"
-        android:scrollbars="vertical"
-        android:scrollHorizontally="false"
         android:singleLine="false"
-        android:text="" />
+        android:text="jsontext" />
+    <TextView
+        android:id="@+id/textview_main_weather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="weather"
+        android:gravity="center_horizontal"
+        android:textSize="30sp"/>
+    <TextView
+        android:id="@+id/textview_main_city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="city"
+        android:gravity="center_horizontal"
+        android:textSize="30sp"/>
+    <TextView
+        android:id="@+id/textview_main_temp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="temp"
+        android:gravity="center_horizontal"
+        android:textSize="30sp"/>
+
+
+    <TextView
+        android:id="@+id/textview_main_temp_min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="temp_min"
+        android:gravity="center_horizontal"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/textview_main_temp_max"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="temp_max"
+        android:gravity="center_horizontal"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/textview_main_humidity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="humidity"
+        android:gravity="center_horizontal"
+        android:textSize="30sp"/>
+
 
     <Button
         android:id="@+id/button_main_requestjson"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="20dp"
         android:layout_margin="15dp"
         android:layout_weight="0.1"
         android:text="JSON 가져오기" />
