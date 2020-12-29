@@ -1,6 +1,8 @@
 package com.example.weathercompareapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,6 +30,9 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
     public static final int LOAD_SUCCESS = 101;
     public static Bitmap bitmap; //다른 클래스에서 사용하기 위해 public 선언
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
     TextView textviewweather;
     TextView textviewcity;
     TextView textviewtemp;
@@ -45,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview_main);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new MyAdapter(myDataset);
+        recyclerView.setAdapter(mAdapter);
 
         Button buttonRequestJSON = (Button) findViewById(R.id.button_main_requestjson);  //button_main_requestjson 연결
         textviewweather = (TextView) findViewById(R.id.textview_main_weather);
@@ -96,16 +108,14 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject jsonObj = null;
                         try {
                             jsonObj = new JSONObject(jsonString);
-                            JSONObject obj = jsonObj.getJSONObject("main");
-                            JSONObject arrObj = jsonObj.getJSONArray("weather").getJSONObject(0);
-                            //current.weather.icon 추가
-                            mainactivity.textviewweather.setText(arrObj.getString("description"));      //current.weather.description 변경
-                            mainactivity.textviewcity.setText(jsonObj.getString("name"));
-                            mainactivity.textviewtemp.setText(obj.getString("temp") + "℃");             //current.temp 변경
-                            mainactivity.textviewtempmin.setText(obj.getString("temp_min") + "℃");      //daily.temp.min 변경
-                            mainactivity.textviewtempmax.setText(obj.getString("temp_max") + "℃");      //daily.temp.max 변경
-                            mainactivity.textviewhumidity.setText(obj.getString("humidity") + "%");
-                            mainactivity.imageviewicon.setImageBitmap(bitmap);
+                            JSONObject currentObj = jsonObj.getJSONObject("current").getJSONArray("weather").getJSONObject(0);
+                            JSONObject dailyObj = jsonObj.getJSONArray("daily").getJSONObject(0).getJSONObject("temp");
+                            mainactivity.textviewweather.setText(currentObj.getString("description"));      //current.weather.description 변경
+                            mainactivity.textviewtemp.setText(jsonObj.getJSONObject("current").getString("temp") + "℃");             //current.temp 변경
+                            mainactivity.textviewtempmin.setText("최고 온도: "+dailyObj.getString("min") + "℃");      //daily.temp.min 변경
+                            mainactivity.textviewtempmax.setText("최저 온도: "+dailyObj.getString("max") + "℃");      //daily.temp.max 변경
+                            mainactivity.textviewhumidity.setText(jsonObj.getJSONObject("current").getString("humidity") + "%");
+                            mainactivity.imageviewicon.setImageBitmap(bitmap);                                          //current.weather.icon 변경
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -117,7 +127,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getJSON() {
-        String requestUrl = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + key + "&lang=kr&units=metric";
+        String requestUrl = "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&exclude=minutely&appid="+key+"&lang=kr&units=metric";
+
 
         //thread 사용 이유 - 네트워크 작업은 메인 thread 가 아닌 별도의 thread에 해야함 그러지 않으면 err: NetworkOnMainThreadException 발생
         Thread thread = new Thread(new Runnable() {
@@ -146,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("결과", result);
                     // iconUrl Bitmap 으로 변환 코드
                     JSONObject jsonObjectIcon = new JSONObject(result);
-                    String icon = jsonObjectIcon.getJSONArray("weather").getJSONObject(0).getString("icon");
+                    String icon = jsonObjectIcon.getJSONObject("current").getJSONArray("weather").getJSONObject(0).getString("icon");
                     URL iconUrl = new URL("http://openweathermap.org/img/wn/"+ icon +"@2x.png");
                     HttpURLConnection iconconn = (HttpURLConnection) iconUrl.openConnection();
                     iconconn.setDoInput(true);
