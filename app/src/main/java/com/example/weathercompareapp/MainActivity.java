@@ -21,18 +21,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static final int LOAD_SUCCESS = 101;
-    public static Bitmap bitmap; //다른 클래스에서 사용하기 위해 public 선언
+    public static Bitmap curBit; //다른 클래스에서 사용하기 위해 public 선언
+    public static List<WeatherData> weathers = new ArrayList<>();
+    public static RecyclerView.Adapter mAdapter;
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+
     TextView textviewweather;
     TextView textviewcity;
     TextView textviewtemp;
@@ -55,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new MyAdapter(myDataset);
-        recyclerView.setAdapter(mAdapter);
 
         Button buttonRequestJSON = (Button) findViewById(R.id.button_main_requestjson);  //button_main_requestjson 연결
         textviewweather = (TextView) findViewById(R.id.textview_main_weather);
@@ -108,14 +111,15 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject jsonObj = null;
                         try {
                             jsonObj = new JSONObject(jsonString);
-                            JSONObject currentObj = jsonObj.getJSONObject("current").getJSONArray("weather").getJSONObject(0);
-                            JSONObject dailyObj = jsonObj.getJSONArray("daily").getJSONObject(0).getJSONObject("temp");
-                            mainactivity.textviewweather.setText(currentObj.getString("description"));      //current.weather.description 변경
-                            mainactivity.textviewtemp.setText(jsonObj.getJSONObject("current").getString("temp") + "℃");             //current.temp 변경
-                            mainactivity.textviewtempmin.setText("최고 온도: "+dailyObj.getString("min") + "℃");      //daily.temp.min 변경
-                            mainactivity.textviewtempmax.setText("최저 온도: "+dailyObj.getString("max") + "℃");      //daily.temp.max 변경
+                            JSONObject curObj = jsonObj.getJSONObject("current").getJSONArray("weather").getJSONObject(0);
+                            JSONObject daiObj = jsonObj.getJSONArray("daily").getJSONObject(0).getJSONObject("temp");
+                            mainactivity.textviewweather.setText(curObj.getString("description"));                          //current.weather.description 변경
+                            mainactivity.textviewtemp.setText(jsonObj.getJSONObject("current").getString("temp") + "℃");       //current.temp 변경
+                            mainactivity.textviewtempmin.setText("최저 온도: "+daiObj.getString("min") + "℃");                //daily.temp.min 변경
+                            mainactivity.textviewtempmax.setText("최고 온도: "+daiObj.getString("max") + "℃");                //daily.temp.max 변경
                             mainactivity.textviewhumidity.setText(jsonObj.getJSONObject("current").getString("humidity") + "%");
-                            mainactivity.imageviewicon.setImageBitmap(bitmap);                                          //current.weather.icon 변경
+                            mainactivity.imageviewicon.setImageBitmap(curBit);                                                          //current.weather.icon 변경
+                            mainactivity.recyclerView.setAdapter(mAdapter);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -155,19 +159,28 @@ public class MainActivity extends AppCompatActivity {
 
                     result = builder.toString();
                     Log.d("결과", result);
-                    // iconUrl Bitmap 으로 변환 코드
-                    JSONObject jsonObjectIcon = new JSONObject(result);
-                    String icon = jsonObjectIcon.getJSONObject("current").getJSONArray("weather").getJSONObject(0).getString("icon");
-                    URL iconUrl = new URL("http://openweathermap.org/img/wn/"+ icon +"@2x.png");
-                    HttpURLConnection iconconn = (HttpURLConnection) iconUrl.openConnection();
-                    iconconn.setDoInput(true);
-                    iconconn.connect();
-                    InputStream is = iconconn.getInputStream();
-                    bitmap = BitmapFactory.decodeStream(is);
-                    // ---------------------------
+
+                    JSONObject obj = new JSONObject(result);
+                    String curIcon = obj.getJSONObject("current").getJSONArray("weather").getJSONObject(0).getString("icon");
+                    curBit = makeBitmap(curIcon);
+
+                    //WeatherData 생성 코드
+                    JSONArray jsonArr = obj.getJSONArray("hourly");
+                    for (int i = 1; i < 25; i++) {                                       // i < 25 인 이유 = 배열 24개를 추출하기 위해
+                        JSONObject hourObj = jsonArr.getJSONObject(i);
+                        WeatherData weatherData = new WeatherData();
+                        weatherData.setTime(hourObj.getString("dt"));
+                        weatherData.setHourTemp(hourObj.getString("temp"));
+//                        weatherData.setLastTemp();                                    //dt를 이용하여 같은시간의 전날 온도를 추출하여 WeatherData에 저장
+                        String hourBit = hourObj.getJSONArray("weather").getJSONObject(0).getString("icon");
+                        weatherData.setHourIcon(makeBitmap(hourBit));
+                        weathers.add(weatherData);
+                    }
+                    //-----------------------
                     reader.close();
                     Message message = mHandler.obtainMessage(LOAD_SUCCESS, result);
                     mHandler.sendMessage(message);
+                    mAdapter = new MyAdapter(weathers);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -175,6 +188,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         thread.start();
+    }
+    //iconUrl -> Bitmap 변환 메서드
+    public Bitmap makeBitmap(String iconCode) throws IOException {
+
+        URL iconUrl = new URL("http://openweathermap.org/img/wn/"+ iconCode +"@2x.png");
+        HttpURLConnection iconConn = (HttpURLConnection) iconUrl.openConnection();
+        iconConn.setDoInput(true);
+        iconConn.connect();
+        InputStream is = iconConn.getInputStream();
+        return BitmapFactory.decodeStream(is);
     }
 
 }

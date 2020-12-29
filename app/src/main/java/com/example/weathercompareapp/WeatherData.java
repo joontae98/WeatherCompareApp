@@ -1,52 +1,51 @@
 package com.example.weathercompareapp;
 
+import android.graphics.Bitmap;
+import android.util.Log;
+
 import java.io.Serializable;
+import java.util.Date;
 
 public class WeatherData implements Serializable {
 
-    private String city;
-    private String temp;
-    private String temp_min;
-    private String temp_max;
-    private String humidity;
+    private String time;
+    private String hourTemp;
+    private Bitmap hourIcon;
+    private String lastTemp;
 
-    public String getCity() {
-        return city;
+    public String getTime() {
+        return time;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setTime(String time) {
+        // Unix 시간 -> UTC 시간 변환
+        long l = Long.parseLong(time);
+        l += 32400;                             //32400 = Unix 시간으로 9시간
+        Date date = new Date(l*1000);
+        this.time = date.toString().substring(0,16);
     }
 
-    public String getTemp() {
-        return temp;
+    public String getHourTemp() {
+        return hourTemp;
     }
 
-    public void setTemp(String temp) {
-        this.temp = temp;
+    public void setHourTemp(String hourTemp) {
+        this.hourTemp = hourTemp;
     }
 
-    public String getTemp_min() {
-        return temp_min;
+    public Bitmap getHourIcon() {
+        return hourIcon;
     }
 
-    public void setTemp_min(String temp_min) {
-        this.temp_min = temp_min;
+    public void setHourIcon(Bitmap hourIcon) {
+        this.hourIcon = hourIcon;
     }
 
-    public String getTemp_max() {
-        return temp_max;
+    public String getLastTemp() {
+        return lastTemp;
     }
 
-    public void setTemp_max(String temp_max) {
-        this.temp_max = temp_max;
+    public void setLastTemp(String lastTemp) {
+        this.lastTemp = lastTemp;
     }
-
-    public String getHumidity() {
-        return humidity;
-    }
-
-    public void setHumidity(String humidity) {
-        this.humidity = humidity;
-    }
-}
+   }
