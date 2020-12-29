@@ -16,52 +16,72 @@
         android:padding="15dp"
         android:singleLine="false"
         android:text="jsontext" />
+
+    <ImageView
+        android:id="@+id/imagevie_main_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/textview_main_weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="weather"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:gravity="center_horizontal"
-        android:textSize="30sp"/>
+        android:text="weather"
+        android:textSize="30sp" />
+
     <TextView
         android:id="@+id/textview_main_city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="city"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:gravity="center_horizontal"
-        android:textSize="30sp"/>
+        android:text="city"
+        android:textSize="30sp" />
+
     <TextView
         android:id="@+id/textview_main_temp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="temp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:gravity="center_horizontal"
-        android:textSize="30sp"/>
+        android:text="temp"
+        android:textSize="30sp" />
 
 
     <TextView
         android:id="@+id/textview_main_temp_min"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="temp_min"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:gravity="center_horizontal"
-        android:textSize="30sp"/>
+        android:text="temp_min"
+        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/textview_main_temp_max"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="temp_max"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:gravity="center_horizontal"
-        android:textSize="30sp"/>
+        android:text="temp_max"
+        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/textview_main_humidity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="humidity"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:gravity="center_horizontal"
-        android:textSize="30sp"/>
+        android:text="humidity"
+        android:textSize="30sp" />
 
 
     <Button

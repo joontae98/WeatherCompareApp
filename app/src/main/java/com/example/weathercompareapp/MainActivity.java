@@ -3,6 +3,7 @@ package com.example.weathercompareapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +11,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     TextView textviewtempmin;
     TextView textviewtempmax;
     TextView textviewhumidity;
+    ImageView imageviewicon;
     ProgressDialog progressDialog;
     String result;
     String key = "96d98409169b4ef34c4529ad092f8471";
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         textviewtempmin = (TextView) findViewById(R.id.textview_main_temp_min);
         textviewtempmax = (TextView) findViewById(R.id.textview_main_temp_max);
         textviewhumidity = (TextView) findViewById(R.id.textview_main_humidity);
+        imageviewicon = (ImageView) findViewById(R.id.imagevie_main_icon);
 
         buttonRequestJSON.setOnClickListener(new View.OnClickListener() {               //버튼 클릭 시 onClick실행
             @Override
@@ -92,16 +96,19 @@ public class MainActivity extends AppCompatActivity {
                         String jsonString = (String) msg.obj;
                         mainactivity.textviewJSONText.setText(jsonString);
                         JSONObject jsonObj = null;
+                        Uri iconUri = Uri.parse("http://openweathermap.org/img/wn/10d@2x.png");
                         try {
                             jsonObj = new JSONObject(jsonString);
                             JSONObject obj = jsonObj.getJSONObject("main");
-                            JSONArray array = jsonObj.getJSONArray("weather");
-                            mainactivity.textviewweather.setText(array.getJSONObject(0).getString("main"));
+                            JSONObject arrObj = jsonObj.getJSONArray("weather").getJSONObject(0);
+                            //current.weather.icon 추가
+                            mainactivity.textviewweather.setText(arrObj.getString("description"));      //current.weather.description 변경
                             mainactivity.textviewcity.setText(jsonObj.getString("name"));
-                            mainactivity.textviewtemp.setText(changeKToC(obj.getString("temp")) + "℃");
-                            mainactivity.textviewtempmin.setText(changeKToC(obj.getString("temp_min")) + "℃");
-                            mainactivity.textviewtempmax.setText(changeKToC(obj.getString("temp_max")) + "℃");
+                            mainactivity.textviewtemp.setText(obj.getString("temp") + "℃");             //current.temp 변경
+                            mainactivity.textviewtempmin.setText(obj.getString("temp_min") + "℃");      //daily.temp.min 변경
+                            mainactivity.textviewtempmax.setText(obj.getString("temp_max") + "℃");      //daily.temp.max 변경
                             mainactivity.textviewhumidity.setText(obj.getString("humidity") + "%");
+                            mainactivity.imageviewicon.setImageURI(iconUri);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -110,20 +117,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
-        public String changeKToC(String str) {       // 절대온도에서 섭씨온도로 변환 메서드
-
-            double temp = Double.parseDouble(str);
-            double result = temp - 275.15;
-
-            return Double.toString(result);
-        }
     }
 
     public void getJSON() {
-        String requestUrl = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + key;
+        String requestUrl = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + key + "&lang=kr&units=metric";
 
-        Thread thread = new Thread(new Runnable() { //thread 사용 이유?
+        //thread 사용 이유 - 네트워크 작업은 메인 thread 가 아닌 별도의 thread에 해야함 그러지 않으면 err: NetworkOnMainThreadException 발생
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
