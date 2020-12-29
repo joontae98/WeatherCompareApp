@@ -3,21 +3,19 @@ package com.example.weathercompareapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -28,13 +26,13 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     public static final int LOAD_SUCCESS = 101;
-    TextView textviewJSONText;
+    public static Bitmap bitmap; //다른 클래스에서 사용하기 위해 public 선언
     TextView textviewweather;
     TextView textviewcity;
     TextView textviewtemp;
+    TextView textviewhumidity;
     TextView textviewtempmin;
     TextView textviewtempmax;
-    TextView textviewhumidity;
     ImageView imageviewicon;
     ProgressDialog progressDialog;
     String result;
@@ -42,20 +40,20 @@ public class MainActivity extends AppCompatActivity {
     String lat = "35.2450439";
     String lon = "129.0189522";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Button buttonRequestJSON = (Button) findViewById(R.id.button_main_requestjson);  //button_main_requestjson 연결
-        textviewJSONText = (TextView) findViewById(R.id.textview_main_jsontext);         //textview_main_jsontext 연결
         textviewweather = (TextView) findViewById(R.id.textview_main_weather);
         textviewcity = (TextView) findViewById(R.id.textview_main_city);
         textviewtemp = (TextView) findViewById(R.id.textview_main_temp);
+        textviewhumidity = (TextView) findViewById(R.id.textview_main_humidity);
         textviewtempmin = (TextView) findViewById(R.id.textview_main_temp_min);
         textviewtempmax = (TextView) findViewById(R.id.textview_main_temp_max);
-        textviewhumidity = (TextView) findViewById(R.id.textview_main_humidity);
-        imageviewicon = (ImageView) findViewById(R.id.imagevie_main_icon);
+        imageviewicon = (ImageView) findViewById(R.id.imageview_main_icon);
 
         buttonRequestJSON.setOnClickListener(new View.OnClickListener() {               //버튼 클릭 시 onClick실행
             @Override
@@ -69,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     //err: Only the original thread that created a view hierarchy can touch its views 발생
@@ -94,9 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     case LOAD_SUCCESS:
                         mainactivity.progressDialog.dismiss();
                         String jsonString = (String) msg.obj;
-                        mainactivity.textviewJSONText.setText(jsonString);
                         JSONObject jsonObj = null;
-                        Uri iconUri = Uri.parse("http://openweathermap.org/img/wn/10d@2x.png");
                         try {
                             jsonObj = new JSONObject(jsonString);
                             JSONObject obj = jsonObj.getJSONObject("main");
@@ -108,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                             mainactivity.textviewtempmin.setText(obj.getString("temp_min") + "℃");      //daily.temp.min 변경
                             mainactivity.textviewtempmax.setText(obj.getString("temp_max") + "℃");      //daily.temp.max 변경
                             mainactivity.textviewhumidity.setText(obj.getString("humidity") + "%");
-                            mainactivity.imageviewicon.setImageURI(iconUri);
+                            mainactivity.imageviewicon.setImageBitmap(bitmap);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -147,6 +144,16 @@ public class MainActivity extends AppCompatActivity {
 
                     result = builder.toString();
                     Log.d("결과", result);
+                    // iconUrl Bitmap 으로 변환 코드
+                    JSONObject jsonObjectIcon = new JSONObject(result);
+                    String icon = jsonObjectIcon.getJSONArray("weather").getJSONObject(0).getString("icon");
+                    URL iconUrl = new URL("http://openweathermap.org/img/wn/"+ icon +"@2x.png");
+                    HttpURLConnection iconconn = (HttpURLConnection) iconUrl.openConnection();
+                    iconconn.setDoInput(true);
+                    iconconn.connect();
+                    InputStream is = iconconn.getInputStream();
+                    bitmap = BitmapFactory.decodeStream(is);
+                    // ---------------------------
                     reader.close();
                     Message message = mHandler.obtainMessage(LOAD_SUCCESS, result);
                     mHandler.sendMessage(message);

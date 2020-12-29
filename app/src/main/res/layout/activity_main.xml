@@ -6,83 +6,99 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textview_main_jsontext"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="15dp"
-        android:layout_weight="0.9"
-        android:maxLines="100"
-        android:padding="15dp"
-        android:singleLine="false"
-        android:text="jsontext" />
 
-    <ImageView
-        android:id="@+id/imagevie_main_icon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/textview_main_weather"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:gravity="center_horizontal"
-        android:text="weather"
-        android:textSize="30sp" />
+        android:layout_margin="15dp">
 
-    <TextView
-        android:id="@+id/textview_main_city"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:gravity="center_horizontal"
-        android:text="city"
-        android:textSize="30sp" />
+        <LinearLayout
+            android:id="@+id/linearlayout_main_icon_weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textview_main_temp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:gravity="center_horizontal"
-        android:text="temp"
-        android:textSize="30sp" />
+            <ImageView
+                android:id="@+id/imageview_main_icon"
+                android:layout_width="130dp"
+                android:layout_height="130dp" />
 
+            <TextView
+                android:id="@+id/textview_main_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="weather"
+                android:textSize="25sp" />
 
-    <TextView
-        android:id="@+id/textview_main_temp_min"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:gravity="center_horizontal"
-        android:text="temp_min"
-        android:textSize="30sp" />
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/textview_main_temp_max"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:gravity="center_horizontal"
-        android:text="temp_max"
-        android:textSize="30sp" />
+        <LinearLayout
+            android:id="@+id/linearlayout_main_city_temp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/linearlayout_main_icon_weather"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textview_main_humidity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:gravity="center_horizontal"
-        android:text="humidity"
-        android:textSize="30sp" />
+            <TextView
+                android:id="@+id/textview_main_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="city"
+                android:textSize="30sp" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/textview_main_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textview_main_city"
+                    android:text="temp"
+                    android:textSize="40sp"
+                    android:layout_margin="30dp"/>
+                <TextView
+                    android:id="@+id/textview_main_humidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textview_main_city"
+                    android:text="humidity"
+                    android:textSize="40sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearlayout_main_max_min"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linearlayout_main_city_temp"
+            android:layout_toRightOf="@+id/linearlayout_main_icon_weather"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textview_main_temp_max"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:text="temp_max"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/textview_main_temp_min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="temp_min"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/button_main_requestjson"
