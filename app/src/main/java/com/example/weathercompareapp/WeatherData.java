@@ -1,6 +1,7 @@
 package com.example.weathercompareapp;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -11,6 +12,12 @@ public class WeatherData implements Serializable {
     private String hourTemp;
     private Bitmap hourIcon;
     private String lastTemp;
+    private Long timeZone;          //timeZone = 표준시와 현재위치의 시간 차이
+
+    public void setTimeZone(String timeZone) {
+
+        this.timeZone = Long.parseLong(timeZone);
+    }
 
     public String getTime() {
         return time;
@@ -19,9 +26,9 @@ public class WeatherData implements Serializable {
     public void setTime(String time) {
         // Unix 시간 -> UTC 시간 변환
         long l = Long.parseLong(time);
-        l += 32400;                             //32400 = Unix 시간으로 9시간
-        Date date = new Date(l*1000);
-        this.time = date.toString().substring(0,16);
+        l += this.timeZone;
+        Date date = new Date(l * 1000);
+        this.time = date.toString().substring(0, 16);
     }
 
     public String getHourTemp() {
@@ -47,4 +54,4 @@ public class WeatherData implements Serializable {
     public void setLastTemp(String lastTemp) {
         this.lastTemp = lastTemp;
     }
-   }
+}

@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    android:weightSum="1">
+    android:weightSum="1"
+    tools:context=".MainActivity">
 
 
     <RelativeLayout
@@ -41,38 +41,37 @@
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/linearlayout_main_icon_weather"
             android:gravity="center"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textview_main_city"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:text="city"
-                android:textSize="30sp"
                 android:layout_weight="3"
-                android:gravity="center|bottom"/>
+                android:gravity="center|bottom"
+                android:text="city"
+                android:textSize="30sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"
-                >
+                android:layout_weight="2">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:text="온도"
-                    android:textSize="20sp"
                     android:layout_weight="1"
                     android:gravity="bottom|center"
-                    />
+                    android:text="온도"
+                    android:textSize="20sp" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:text="습도"
-                    android:textSize="20sp"
                     android:layout_weight="1"
-                    android:gravity="bottom|center"/>
+                    android:gravity="bottom|center"
+                    android:text="습도"
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -84,37 +83,38 @@
                     android:id="@+id/textview_main_temp"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:text="temp"
-                    android:textSize="30sp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    />
+                    android:text="temp"
+                    android:textSize="30sp" />
+
                 <TextView
                     android:id="@+id/textview_main_humidity"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:text="humidity"
-                    android:textSize="30sp"
                     android:layout_weight="1"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    android:text="humidity"
+                    android:textSize="30sp" />
             </LinearLayout>
+
             <TextView
                 android:id="@+id/textview_main_temp_max"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:text="temp_max"
-                android:textSize="15sp"
                 android:layout_weight="1"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:text="temp_max"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/textview_main_temp_min"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:text="temp_min"
-                android:textSize="15sp"
                 android:layout_weight="1"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:text="temp_min"
+                android:textSize="15sp" />
 
         </LinearLayout>
 
@@ -125,8 +125,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="15dp"
-        android:scrollbars="vertical"
-        android:layout_weight="0.6"/>
+        android:layout_weight="0.6"
+        android:scrollbars="vertical" />
+
     <Button
         android:id="@+id/button_main_requestjson"
         android:layout_width="match_parent"

@@ -1,6 +1,6 @@
 package com.example.weathercompareapp;
 
-import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +15,9 @@ import java.util.List;
 //RecyclerView 연결 Adapter 클래스
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<WeatherData> mDataset;
+    int curTemp;
+    int lastTemp;
+    int compTemp;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView textviewrowtime;
@@ -52,10 +55,22 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.imageviewrowicon.setImageBitmap(weathers.getHourIcon());
         holder.textviewrowtemp.setText(weathers.getHourTemp());
 
+        curTemp = parsing(weathers.getHourTemp());
+        lastTemp = parsing(weathers.getLastTemp());
+        compTemp = (curTemp) - (lastTemp);
+        holder.textviewrowcompare.setText("전날 대비: " + (Integer.toString(compTemp)));
+
     }
 
     @Override
     public int getItemCount() {
         return mDataset == null ? 0 : mDataset.size();
+    }
+
+    public int parsing(String str) {
+//        Log.d("들어온 값", str);
+        int parAfter = (int) Double.parseDouble(str);
+//        System.out.println("파싱 후 " + parAfter);
+        return parAfter;
     }
 }
