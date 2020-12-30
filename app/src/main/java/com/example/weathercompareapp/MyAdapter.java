@@ -12,12 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import static com.example.weathercompareapp.MainActivity.blue;
+import static com.example.weathercompareapp.MainActivity.red;
+
 //RecyclerView 연결 Adapter 클래스
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<WeatherData> mDataset;
     int curTemp;
     int lastTemp;
     int compTemp;
+
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView textviewrowtime;
@@ -51,6 +55,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
         WeatherData weathers = mDataset.get(position);
+        Log.d("시간",weathers.getTime()+"  / "+position);
         holder.textviewrowtime.setText(weathers.getTime());
         holder.imageviewrowicon.setImageBitmap(weathers.getHourIcon());
         holder.textviewrowtemp.setText(weathers.getHourTemp());
@@ -58,7 +63,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         curTemp = parsing(weathers.getHourTemp());
         lastTemp = parsing(weathers.getLastTemp());
         compTemp = (curTemp) - (lastTemp);
-        holder.textviewrowcompare.setText("전날 대비: " + (Integer.toString(compTemp)));
+        if (compTemp >= 0 ) {
+            holder.textviewrowcompare.setTextColor(red);
+        } else {
+            holder.textviewrowcompare.setTextColor(blue);
+        }
+        holder.textviewrowcompare.setText((Integer.toString(compTemp)));
 
     }
 

@@ -38,10 +38,18 @@
                 android:text="temp" />
 
             <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:text="전날 대비: " />
+
+            <TextView
                 android:id="@+id/textview_row_compare"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3.5"
+                android:layout_weight="1.5"
                 android:gravity="center"
                 android:textSize="15sp"
                 android:text="compareTemp" />

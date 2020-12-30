@@ -12,12 +12,6 @@ public class WeatherData implements Serializable {
     private String hourTemp;
     private Bitmap hourIcon;
     private String lastTemp;
-    private Long timeZone;          //timeZone = 표준시와 현재위치의 시간 차이
-
-    public void setTimeZone(String timeZone) {
-
-        this.timeZone = Long.parseLong(timeZone);
-    }
 
     public String getTime() {
         return time;
@@ -26,9 +20,9 @@ public class WeatherData implements Serializable {
     public void setTime(String time) {
         // Unix 시간 -> UTC 시간 변환
         long l = Long.parseLong(time);
-        l += this.timeZone;
         Date date = new Date(l * 1000);
         this.time = date.toString().substring(0, 16);
+        Log.d("set시간", this.time);
     }
 
     public String getHourTemp() {

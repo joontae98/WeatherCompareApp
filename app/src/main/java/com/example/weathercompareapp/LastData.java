@@ -43,7 +43,7 @@ public class LastData {
                         builder.append(line);                               //buffer 의 결과를 조합하여 최종 결과 문자열을 생성
                     }
                     lastJSON = builder.toString();
-//                    Log.d("결과", lastJSON);
+                    Log.d("결과", lastJSON);
                     JSONObject lastObj = new JSONObject(lastJSON);
                     temp = lastObj.getJSONObject("current").getString("temp");
                     weatherData.setLastTemp(temp);

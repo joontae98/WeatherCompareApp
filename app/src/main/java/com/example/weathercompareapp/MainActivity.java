@@ -5,8 +5,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +33,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     //public static 변수들은 lastData 에서 사용하기 위해 public static 으로 선언
@@ -49,13 +54,15 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     public static String curJSON;
     public static String lastJSON;
-    public static String result;
     public static String key = "96d98409169b4ef34c4529ad092f8471";
-    public static String lat = "35.2450439";
-    public static String lon = "129.0189522";
+    public static String lat;
+    public static String lon;
     public static String dt;
     public static String temp;
     public static WeatherData weatherData;
+    public static String address;
+    public static int red;
+    public static int blue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +81,21 @@ public class MainActivity extends AppCompatActivity {
         textviewtempmin = (TextView) findViewById(R.id.textview_main_temp_min);
         textviewtempmax = (TextView) findViewById(R.id.textview_main_temp_max);
         imageviewicon = (ImageView) findViewById(R.id.imageview_main_icon);
+
+        textviewweather.setSelected(true);
+        textviewcity.setSelected(true);
+
+        GpsTracker gpsTracker = new GpsTracker(MainActivity.this);
+        double latitude = gpsTracker.getLatitude();
+        double longitude = gpsTracker.getLongitude();
+        System.out.println(latitude + " / " + longitude);
+        address = getCurrentAddress(latitude, longitude);
+        lat = Double.toString(latitude);
+        lon = Double.toString(longitude);
+
+        Resources res = getResources();
+        red = res.getColor(R.color.red);
+        blue = res.getColor(R.color.blue);
 
         buttonRequestJSON.setOnClickListener(new View.OnClickListener() {               //버튼 클릭 시 onClick 실행
             @Override
@@ -128,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                             jsonObj = new JSONObject(jsonString);
                             JSONObject curObj = jsonObj.getJSONObject("current").getJSONArray("weather").getJSONObject(0);
                             JSONObject daiObj = jsonObj.getJSONArray("daily").getJSONObject(0).getJSONObject("temp");
+                            mainactivity.textviewcity.setText(address);
                             mainactivity.textviewweather.setText(curObj.getString("description"));                               //current.weather.description 변경
                             mainactivity.textviewtemp.setText(jsonObj.getJSONObject("current").getString("temp") + "℃");        //current.temp 변경
                             mainactivity.textviewtempmin.setText("최저 온도: " + daiObj.getString("min") + "℃");                   //daily.temp.min 변경
@@ -186,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
                         dt = Long.toString(Long.parseLong(hourObj.getString("dt")) - 86400);
                         String lastUrl = "http://api.openweathermap.org/data/2.5/onecall/timemachine?lat=" + lat + "&lon=" + lon + "&dt=" + dt + "&appid=" + key + "&units=metric";
                         weatherData = new WeatherData();
-                        weatherData.setTimeZone(obj.getString("timezone_offset"));
                         weatherData.setTime(hourObj.getString("dt"));
                         weatherData.setHourTemp(hourObj.getString("temp"));
                         String hourBit = hourObj.getJSONArray("weather").getJSONObject(0).getString("icon");
@@ -218,5 +240,29 @@ public class MainActivity extends AppCompatActivity {
         InputStream is = iconConn.getInputStream();
         return BitmapFactory.decodeStream(is);
     }
+
+    public String getCurrentAddress(double latitude, double longitude) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 100);
+        } catch (IOException ioException) {
+            Toast.makeText(this, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
+
+            return "지오코더 서비스 사용불가";
+        } catch (IllegalArgumentException illegalArgumentException) {
+            Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
+
+            return "잘못된 GPS 좌표";
+        }
+        if (addresses == null || addresses.size() == 0) {
+            Toast.makeText(this, "주소 미발견", Toast.LENGTH_LONG).show();
+
+            return "주소 미발견";
+        }
+        Address address = addresses.get(0);
+        return address.getAddressLine(0).toString() + "\n";
+    }
+
 
 }
