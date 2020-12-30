@@ -85,6 +85,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage("Please wait.....");
+        progressDialog.show();
+
+        getJSON();
+    }
+
     //err: Only the original thread that created a view hierarchy can touch its views 발생
     //원인 main thread 외의 thread에서 ui를 임의로 변경해서 발생
     //해결 방법 handler를 이용하여 main thread를 간접적으로 사용
@@ -162,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
                     JSONObject obj = new JSONObject(result);
                     String curIcon = obj.getJSONObject("current").getJSONArray("weather").getJSONObject(0).getString("icon");
-                    curBit = makeBitmap(curIcon);
+                    curBit = getBitmap(curIcon);
 
                     //WeatherData 생성 코드
                     JSONArray jsonArr = obj.getJSONArray("hourly");
@@ -173,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                         weatherData.setHourTemp(hourObj.getString("temp"));
 //                        weatherData.setLastTemp();                                    //dt를 이용하여 같은시간의 전날 온도를 추출하여 WeatherData에 저장
                         String hourBit = hourObj.getJSONArray("weather").getJSONObject(0).getString("icon");
-                        weatherData.setHourIcon(makeBitmap(hourBit));
+                        weatherData.setHourIcon(getBitmap(hourBit));
                         weathers.add(weatherData);
                     }
                     //-----------------------
@@ -190,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
     }
     //iconUrl -> Bitmap 변환 메서드
-    public Bitmap makeBitmap(String iconCode) throws IOException {
+    public Bitmap getBitmap(String iconCode) throws IOException {
 
         URL iconUrl = new URL("http://openweathermap.org/img/wn/"+ iconCode +"@2x.png");
         HttpURLConnection iconConn = (HttpURLConnection) iconUrl.openConnection();

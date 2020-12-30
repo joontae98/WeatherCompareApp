@@ -31,7 +31,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
     }
 
-    public MyAdapter(List<WeatherData> myDataset) {             //생성자 매서드
+    public MyAdapter(List<WeatherData> myDataset) {                     //생성자 매서드
         mDataset = myDataset;
     }
 

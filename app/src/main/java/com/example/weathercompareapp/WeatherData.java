@@ -1,7 +1,6 @@
 package com.example.weathercompareapp;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Date;

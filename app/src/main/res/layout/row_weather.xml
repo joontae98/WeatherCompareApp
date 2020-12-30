@@ -18,27 +18,30 @@
                 android:id="@+id/textview_row_time"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:gravity="center"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:text="time"/>
 
             <ImageView
                 android:id="@+id/imageview_row_icon"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3"/>
+                android:layout_weight="3" />
 
             <TextView
                 android:id="@+id/textview_row_temp"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2"/>
+                android:layout_weight="2"
+                android:text="temp"/>
 
             <TextView
                 android:id="@+id/textview_row_compare"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4"/>
+                android:layout_weight="3.5"
+                android:text="compareTemp"/>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
