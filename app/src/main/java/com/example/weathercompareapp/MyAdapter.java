@@ -18,23 +18,23 @@ import static com.example.weathercompareapp.MainActivity.red;
 //RecyclerView 연결 Adapter 클래스
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<WeatherData> mDataset;
-    int curTemp;
-    int lastTemp;
-    int compTemp;
+    private int curTemp;
+    private int lastTemp;
+    private int compTemp;
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView textviewrowtime;
-        public ImageView imageviewrowicon;
-        public TextView textviewrowtemp;
-        public TextView textviewrowcompare;
+        private TextView textView_row_time;
+        private ImageView imageView_row_icon;
+        private TextView textView_row_temp;
+        private TextView textView_row_compare;
 
         public MyViewHolder(View v) {
             super(v);
-            textviewrowtime = v.findViewById(R.id.textview_row_time);
-            imageviewrowicon = v.findViewById(R.id.imageview_row_icon);
-            textviewrowtemp = v.findViewById(R.id.textview_row_temp);
-            textviewrowcompare = v.findViewById(R.id.textview_row_compare);
+            textView_row_time = v.findViewById(R.id.textView_row_time);
+            imageView_row_icon = v.findViewById(R.id.imageView_row_icon);
+            textView_row_temp = v.findViewById(R.id.textView_row_temp);
+            textView_row_compare = v.findViewById(R.id.textView_row_compare);
         }
     }
 
@@ -55,20 +55,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
         WeatherData weathers = mDataset.get(position);
-        Log.d("시간",weathers.getTime()+"  / "+position);
-        holder.textviewrowtime.setText(weathers.getTime());
-        holder.imageviewrowicon.setImageBitmap(weathers.getHourIcon());
-        holder.textviewrowtemp.setText(weathers.getHourTemp());
+        holder.textView_row_time.setText(weathers.getTime());
+        holder.imageView_row_icon.setImageBitmap(weathers.getHourIcon());
+        holder.textView_row_temp.setText(weathers.getHourTemp());
 
         curTemp = parsing(weathers.getHourTemp());
         lastTemp = parsing(weathers.getLastTemp());
         compTemp = (curTemp) - (lastTemp);
         if (compTemp >= 0 ) {
-            holder.textviewrowcompare.setTextColor(red);
+            holder.textView_row_compare.setTextColor(red);
         } else {
-            holder.textviewrowcompare.setTextColor(blue);
+            holder.textView_row_compare.setTextColor(blue);
         }
-        holder.textviewrowcompare.setText((Integer.toString(compTemp)));
+        holder.textView_row_compare.setText((Integer.toString(compTemp)));
 
     }
 

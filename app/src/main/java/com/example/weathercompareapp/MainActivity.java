@@ -1,6 +1,9 @@
 package com.example.weathercompareapp;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,10 +13,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -44,52 +51,56 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
-
-    TextView textviewweather;
-    TextView textviewcity;
-    TextView textviewtemp;
-    TextView textviewhumidity;
-    TextView textviewtempmin;
-    TextView textviewtempmax;
-    ImageView imageviewicon;
+    Toolbar toolBar;
+    TextView textView_weather;
+    TextView textView_city;
+    TextView textView_temp;
+    TextView textView_humidity;
+    TextView textView_tempMin;
+    TextView textView_tempMax;
+    ImageView imageView_icon;
     ProgressDialog progressDialog;
-    public static String curJSON;
-    public static String lastJSON;
-    public static String key = "96d98409169b4ef34c4529ad092f8471";
-    public static String lat;
-    public static String lon;
-    public static String dt;
-    public static String temp;
-    public static WeatherData weatherData;
-    public static String address;
+    private String key = "96d98409169b4ef34c4529ad092f8471";
+    private String curJSON;
+    private String lastJSON;
+    private String lat;
+    private String lon;
+    private String dt;
+    private String temp;
+    private WeatherData weatherData;
+    private static String address;
     public static int red;
     public static int blue;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview_main);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView_main);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        toolBar = (Toolbar) findViewById(R.id.toolBar_main);
+        setSupportActionBar(toolBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_reorder);
 
         Button buttonRequestJSON = (Button) findViewById(R.id.button_main_requestjson);  //button_main_requestjson 연결
-        textviewweather = (TextView) findViewById(R.id.textview_main_weather);
-        textviewcity = (TextView) findViewById(R.id.textview_main_city);
-        textviewtemp = (TextView) findViewById(R.id.textview_main_temp);
-        textviewhumidity = (TextView) findViewById(R.id.textview_main_humidity);
-        textviewtempmin = (TextView) findViewById(R.id.textview_main_temp_min);
-        textviewtempmax = (TextView) findViewById(R.id.textview_main_temp_max);
-        imageviewicon = (ImageView) findViewById(R.id.imageview_main_icon);
+        textView_weather = (TextView) findViewById(R.id.textView_main_weather);
+        textView_city = (TextView) findViewById(R.id.textView_main_city);
+        textView_temp = (TextView) findViewById(R.id.textView_main_temp);
+        textView_humidity = (TextView) findViewById(R.id.textView_main_humidity);
+        textView_tempMin = (TextView) findViewById(R.id.textView_main_temp_min);
+        textView_tempMax = (TextView) findViewById(R.id.textView_main_temp_max);
+        imageView_icon = (ImageView) findViewById(R.id.imageView_main_icon);
 
-        textviewweather.setSelected(true);
-        textviewcity.setSelected(true);
+        textView_weather.setSelected(true);
+        textView_city.setSelected(true);
 
         GpsTracker gpsTracker = new GpsTracker(MainActivity.this);
         double latitude = gpsTracker.getLatitude();
         double longitude = gpsTracker.getLongitude();
-        System.out.println(latitude + " / " + longitude);
         address = getCurrentAddress(latitude, longitude);
         lat = Double.toString(latitude);
         lon = Double.toString(longitude);
@@ -112,7 +123,31 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+// menu 관련 코드
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                Toast.makeText(getApplicationContext(), "환경설정 버튼 클릭됨", Toast.LENGTH_LONG).show();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                Toast.makeText(getApplicationContext(), "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show();
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+//-----------
     @Override
     protected void onStart() {
         super.onStart();
@@ -151,18 +186,17 @@ public class MainActivity extends AppCompatActivity {
                             jsonObj = new JSONObject(jsonString);
                             JSONObject curObj = jsonObj.getJSONObject("current").getJSONArray("weather").getJSONObject(0);
                             JSONObject daiObj = jsonObj.getJSONArray("daily").getJSONObject(0).getJSONObject("temp");
-                            mainactivity.textviewcity.setText(address);
-                            mainactivity.textviewweather.setText(curObj.getString("description"));                               //current.weather.description 변경
-                            mainactivity.textviewtemp.setText(jsonObj.getJSONObject("current").getString("temp") + "℃");        //current.temp 변경
-                            mainactivity.textviewtempmin.setText("최저 온도: " + daiObj.getString("min") + "℃");                   //daily.temp.min 변경
-                            mainactivity.textviewtempmax.setText("최고 온도: " + daiObj.getString("max") + "℃");                   //daily.temp.max 변경
-                            mainactivity.textviewhumidity.setText(jsonObj.getJSONObject("current").getString("humidity") + "%");
-                            mainactivity.imageviewicon.setImageBitmap(curBit);                                                          //current.weather.icon 변경
+                            mainactivity.textView_city.setText(address);
+                            mainactivity.textView_weather.setText(curObj.getString("description"));                               //current.weather.description 변경
+                            mainactivity.textView_temp.setText(jsonObj.getJSONObject("current").getString("temp") + "℃");        //current.temp 변경
+                            mainactivity.textView_tempMin.setText("최저 온도: " + daiObj.getString("min") + "℃");                   //daily.temp.min 변경
+                            mainactivity.textView_tempMax.setText("최고 온도: " + daiObj.getString("max") + "℃");                   //daily.temp.max 변경
+                            mainactivity.textView_humidity.setText(jsonObj.getJSONObject("current").getString("humidity") + "%");
+                            mainactivity.imageView_icon.setImageBitmap(curBit);                                                          //current.weather.icon 변경
                             mainactivity.recyclerView.setAdapter(mAdapter);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                         break;
                 }
             }
@@ -212,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                             builder.append(line);                               //buffer 의 결과를 조합하여 최종 결과 문자열을 생성
                         }
                         lastJSON = builder.toString();
-                        Log.d("결과", lastJSON);
+//                        Log.d("두번째 API 호출", lastJSON);
                         JSONObject lastObj = new JSONObject(lastJSON);
                         temp = lastObj.getJSONObject("current").getString("temp");
                         weatherData.setLastTemp(temp);
@@ -251,9 +285,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 100);
         } catch (IOException ioException) {
-            Toast.makeText(this, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "서비스 사용불가", Toast.LENGTH_LONG).show();
 
-            return "지오코더 서비스 사용불가";
+            return "서비스 사용불가";
         } catch (IllegalArgumentException illegalArgumentException) {
             Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
 
