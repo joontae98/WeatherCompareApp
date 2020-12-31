@@ -17,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -59,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     TextView textView_tempMin;
     TextView textView_tempMax;
     ImageView imageView_icon;
+    Button button_requestJSON;
+    Button button_save;
     ProgressDialog progressDialog;
     private String key = "96d98409169b4ef34c4529ad092f8471";
     private String curJSON;
@@ -68,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
     private String dt;
     private String temp;
     private WeatherData weatherData;
-    private static String address;
+    private DbOpenHelper mDbOpenHelper;
+    public static String address;
     public static int red;
     public static int blue;
 
@@ -77,16 +79,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView_main);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
         toolBar = (Toolbar) findViewById(R.id.toolBar_main);
         setSupportActionBar(toolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_reorder);
 
-        Button buttonRequestJSON = (Button) findViewById(R.id.button_main_requestjson);  //button_main_requestjson 연결
+        button_requestJSON = (Button) findViewById(R.id.button_main_requestJSON);  //button_main_requestjson 연결
+        button_save = (Button) findViewById(R.id.button_main_save);
         textView_weather = (TextView) findViewById(R.id.textView_main_weather);
         textView_city = (TextView) findViewById(R.id.textView_main_city);
         textView_temp = (TextView) findViewById(R.id.textView_main_temp);
@@ -109,7 +114,11 @@ public class MainActivity extends AppCompatActivity {
         red = res.getColor(R.color.red);
         blue = res.getColor(R.color.blue);
 
-        buttonRequestJSON.setOnClickListener(new View.OnClickListener() {               //버튼 클릭 시 onClick 실행
+        mDbOpenHelper = new DbOpenHelper(this);
+        mDbOpenHelper.open();
+        mDbOpenHelper.create();
+
+        button_requestJSON.setOnClickListener(new View.OnClickListener() {               //버튼 클릭 시 onClick 실행
             @Override
             public void onClick(View v) {
 
@@ -122,6 +131,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        button_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = 1; i < weathers.size(); i++) {
+                    WeatherData insertData = weathers.get(i);
+                    mDbOpenHelper.insertColumn(insertData.getTime(),insertData.getHourIcon().toString(),insertData.getHourTemp(),insertData.getCompTemp());
+                }
+
+            }
+        });
     }
 // menu 관련 코드
     @Override
@@ -156,51 +175,6 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.show();
 
         getJSON();
-    }
-
-    //err: Only the original thread that created a view hierarchy can touch its views 발생
-    //원인 main thread 외의 thread 에서 ui를 임의로 변경해서 발생
-    //해결 방법 handler 를 이용하여 main thread 를 간접적으로 사용
-    private final MyHandler mHandler = new MyHandler(this);
-
-    private static class MyHandler extends Handler {
-        private final WeakReference<MainActivity> weakReference;
-
-        public MyHandler(MainActivity mainactivity) {
-            weakReference = new WeakReference<MainActivity>(mainactivity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-
-            MainActivity mainactivity = weakReference.get();
-
-            if (mainactivity != null) {
-                switch (msg.what) {
-
-                    case LOAD_SUCCESS:
-                        mainactivity.progressDialog.dismiss();
-                        String jsonString = (String) msg.obj;
-                        JSONObject jsonObj = null;
-                        try {
-                            jsonObj = new JSONObject(jsonString);
-                            JSONObject curObj = jsonObj.getJSONObject("current").getJSONArray("weather").getJSONObject(0);
-                            JSONObject daiObj = jsonObj.getJSONArray("daily").getJSONObject(0).getJSONObject("temp");
-                            mainactivity.textView_city.setText(address);
-                            mainactivity.textView_weather.setText(curObj.getString("description"));                               //current.weather.description 변경
-                            mainactivity.textView_temp.setText(jsonObj.getJSONObject("current").getString("temp") + "℃");        //current.temp 변경
-                            mainactivity.textView_tempMin.setText("최저 온도: " + daiObj.getString("min") + "℃");                   //daily.temp.min 변경
-                            mainactivity.textView_tempMax.setText("최고 온도: " + daiObj.getString("max") + "℃");                   //daily.temp.max 변경
-                            mainactivity.textView_humidity.setText(jsonObj.getJSONObject("current").getString("humidity") + "%");
-                            mainactivity.imageView_icon.setImageBitmap(curBit);                                                          //current.weather.icon 변경
-                            mainactivity.recyclerView.setAdapter(mAdapter);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                }
-            }
-        }
     }
 
     public void getJSON() {
@@ -269,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //iconUrl -> Bitmap 변환 메서드
+
     public Bitmap getBitmap(String iconCode) throws IOException {
 
         URL iconUrl = new URL("http://openweathermap.org/img/wn/" + iconCode + "@2x.png");
@@ -278,7 +253,6 @@ public class MainActivity extends AppCompatActivity {
         InputStream is = iconConn.getInputStream();
         return BitmapFactory.decodeStream(is);
     }
-
     public String getCurrentAddress(double latitude, double longitude) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         List<Address> addresses;
@@ -302,4 +276,49 @@ public class MainActivity extends AppCompatActivity {
         return address.getAddressLine(0).toString() + "\n";
     }
 
+
+    //err: Only the original thread that created a view hierarchy can touch its views 발생
+    //원인 main thread 외의 thread 에서 ui를 임의로 변경해서 발생
+    //해결 방법 handler 를 이용하여 main thread 를 간접적으로 사용
+    private final MyHandler mHandler = new MyHandler(this);
+
+    private static class MyHandler extends Handler {
+        private final WeakReference<MainActivity> weakReference;
+
+        public MyHandler(MainActivity mainactivity) {
+            weakReference = new WeakReference<MainActivity>(mainactivity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            MainActivity mainactivity = weakReference.get();
+
+            if (mainactivity != null) {
+                switch (msg.what) {
+
+                    case LOAD_SUCCESS:
+                        mainactivity.progressDialog.dismiss();
+                        String jsonString = (String) msg.obj;
+                        JSONObject jsonObj = null;
+                        try {
+                            jsonObj = new JSONObject(jsonString);
+                            JSONObject curObj = jsonObj.getJSONObject("current").getJSONArray("weather").getJSONObject(0);
+                            JSONObject daiObj = jsonObj.getJSONArray("daily").getJSONObject(0).getJSONObject("temp");
+                            mainactivity.textView_city.setText(address);
+                            mainactivity.textView_weather.setText(curObj.getString("description"));                               //current.weather.description 변경
+                            mainactivity.textView_temp.setText(jsonObj.getJSONObject("current").getString("temp") + "℃");        //current.temp 변경
+                            mainactivity.textView_tempMin.setText("최저 온도: " + daiObj.getString("min") + "℃");                   //daily.temp.min 변경
+                            mainactivity.textView_tempMax.setText("최고 온도: " + daiObj.getString("max") + "℃");                   //daily.temp.max 변경
+                            mainactivity.textView_humidity.setText(jsonObj.getJSONObject("current").getString("humidity") + "%");
+                            mainactivity.imageView_icon.setImageBitmap(curBit);                                                          //current.weather.icon 변경
+                            mainactivity.recyclerView.setAdapter(mAdapter);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
+            }
+        }
+    }
 }

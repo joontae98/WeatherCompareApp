@@ -12,6 +12,18 @@ public class WeatherData implements Serializable {
     private String hourTemp;
     private Bitmap hourIcon;
     private String lastTemp;
+    private int compTemp;
+
+    public int getCompTemp() {
+        int curTemp;
+        int lastTemp;
+        int resultTemp;
+        curTemp = parsing(this.hourTemp);
+        lastTemp = parsing(this.lastTemp);
+        resultTemp = curTemp - lastTemp;
+        this.compTemp = resultTemp;
+        return compTemp;
+    }
 
     public String getTime() {
         return time;
@@ -40,11 +52,14 @@ public class WeatherData implements Serializable {
         this.hourIcon = hourIcon;
     }
 
-    public String getLastTemp() {
-        return lastTemp;
-    }
-
     public void setLastTemp(String lastTemp) {
         this.lastTemp = lastTemp;
+    }
+
+    public int parsing(String str) {
+//        Log.d("들어온 값", str);
+        int parAfter = (int) Double.parseDouble(str);
+//        System.out.println("파싱 후 " + parAfter);
+        return parAfter;
     }
 }

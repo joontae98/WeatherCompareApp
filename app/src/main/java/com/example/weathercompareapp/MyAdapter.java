@@ -1,6 +1,5 @@
 package com.example.weathercompareapp;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<WeatherData> mDataset;
     private int curTemp;
     private int lastTemp;
-    private int compTemp;
+    private int resultTemp;
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -59,15 +58,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.imageView_row_icon.setImageBitmap(weathers.getHourIcon());
         holder.textView_row_temp.setText(weathers.getHourTemp());
 
-        curTemp = parsing(weathers.getHourTemp());
-        lastTemp = parsing(weathers.getLastTemp());
-        compTemp = (curTemp) - (lastTemp);
-        if (compTemp >= 0 ) {
+//        curTemp = parsing(weathers.getHourTemp());
+//        lastTemp = parsing(weathers.getLastTemp());
+//        resultTemp = (curTemp) - (lastTemp);
+
+        if (weathers.getCompTemp() >= 0 ) {
             holder.textView_row_compare.setTextColor(red);
         } else {
             holder.textView_row_compare.setTextColor(blue);
         }
-        holder.textView_row_compare.setText((Integer.toString(compTemp)));
+        holder.textView_row_compare.setText((Integer.toString(weathers.getCompTemp())));
 
     }
 
