@@ -22,7 +22,6 @@ public class WeatherData implements Serializable {
         long l = Long.parseLong(time);
         Date date = new Date(l * 1000);
         this.time = date.toString().substring(0, 16);
-        Log.d("set시간", this.time);
     }
 
     public String getHourTemp() {

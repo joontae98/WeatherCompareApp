@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
+
     TextView textviewweather;
     TextView textviewcity;
     TextView textviewtemp;
@@ -176,28 +177,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-
-                    Log.d("연결된 url", curUrl);
-                    URL url = new URL(curUrl);
-                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();     //http 연결을 생성
-                    httpURLConnection.setRequestMethod("GET");
-                    httpURLConnection.setDoOutput(true);
-                    httpURLConnection.setDoInput(true);
-
-
-                    InputStream inputStream;
-                    inputStream = httpURLConnection.getInputStream();                                   // url 결과를 받음
-
-                    StringBuilder builder = new StringBuilder();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));        //받은 결과를 buffer 에 저장
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        builder.append(line);                               //buffer 의 결과를 조합하여 최종 결과 문자열을 생성
-                    }
-                    curJSON = builder.toString();
-                    //Log.d("결과", curJSON);
-                    reader.close();
-
+                    CurrentData curData = new CurrentData();                //인스턴스 생성
+                    curJSON = curData.getCurData(curUrl);
                     JSONObject obj = new JSONObject(curJSON);
                     String curIcon = obj.getJSONObject("current").getJSONArray("weather").getJSONObject(0).getString("icon");
                     curBit = getBitmap(curIcon);
@@ -213,10 +194,33 @@ public class MainActivity extends AppCompatActivity {
                         weatherData.setHourTemp(hourObj.getString("temp"));
                         String hourBit = hourObj.getJSONArray("weather").getJSONObject(0).getString("icon");
                         weatherData.setHourIcon(getBitmap(hourBit));
-                        LastData.getJSON(lastUrl);
+
+                        URL url = new URL(lastUrl);
+                        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();     //http 연결을 생성
+                        httpURLConnection.setRequestMethod("GET");
+                        httpURLConnection.setDoOutput(true);
+                        httpURLConnection.setDoInput(true);
+
+
+                        InputStream inputStream;
+                        inputStream = httpURLConnection.getInputStream();                                   // url 결과를 받음
+
+                        StringBuilder builder = new StringBuilder();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));        //받은 결과를 buffer 에 저장
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            builder.append(line);                               //buffer 의 결과를 조합하여 최종 결과 문자열을 생성
+                        }
+                        lastJSON = builder.toString();
+                        Log.d("결과", lastJSON);
+                        JSONObject lastObj = new JSONObject(lastJSON);
+                        temp = lastObj.getJSONObject("current").getString("temp");
+                        weatherData.setLastTemp(temp);
+                        weathers.add(weatherData);
+
+                        reader.close();
                     }
                     //-----------------------
-
 
                     Message message = mHandler.obtainMessage(LOAD_SUCCESS, curJSON);
                     mHandler.sendMessage(message);
@@ -263,6 +267,5 @@ public class MainActivity extends AppCompatActivity {
         Address address = addresses.get(0);
         return address.getAddressLine(0).toString() + "\n";
     }
-
 
 }
