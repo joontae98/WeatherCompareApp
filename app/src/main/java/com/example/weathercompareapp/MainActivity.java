@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView_icon;
     Button button_requestJSON;
     Button button_save;
+    Button button_delete;
     ProgressDialog progressDialog;
     private String key = "96d98409169b4ef34c4529ad092f8471";
     private String curJSON;
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private String dt;
     private String temp;
     private WeatherData weatherData;
-    private DbOpenHelper mDbOpenHelper;
+    private DBOpenHelper mDBOpenHelper;
     public static String address;
     public static int red;
     public static int blue;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         button_requestJSON = (Button) findViewById(R.id.button_main_requestJSON);  //button_main_requestjson 연결
         button_save = (Button) findViewById(R.id.button_main_save);
+        button_delete = (Button) findViewById(R.id.button_main_delete);
         textView_weather = (TextView) findViewById(R.id.textView_main_weather);
         textView_city = (TextView) findViewById(R.id.textView_main_city);
         textView_temp = (TextView) findViewById(R.id.textView_main_temp);
@@ -114,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
         red = res.getColor(R.color.red);
         blue = res.getColor(R.color.blue);
 
-        mDbOpenHelper = new DbOpenHelper(this);
-        mDbOpenHelper.open();
-        mDbOpenHelper.create();
+        mDBOpenHelper = new DBOpenHelper(this);
+        mDBOpenHelper.open();
+        mDBOpenHelper.create();
 
         button_requestJSON.setOnClickListener(new View.OnClickListener() {               //버튼 클릭 시 onClick 실행
             @Override
@@ -136,9 +138,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 for (int i = 1; i < weathers.size(); i++) {
                     WeatherData insertData = weathers.get(i);
-                    mDbOpenHelper.insertColumn(insertData.getTime(),insertData.getHourIcon().toString(),insertData.getHourTemp(),insertData.getCompTemp());
+                    mDBOpenHelper.insertColumn(insertData.getTime(),insertData.getHourIcon().toString(),insertData.getHourTemp(),insertData.getCompTemp());
                 }
 
+            }
+        });
+        button_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDBOpenHelper.deleteAllColumns();
             }
         });
     }
