@@ -3,12 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-
+<!--
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolBar_main"
+        app:titleTextColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -17,7 +19,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         >
     </com.google.android.material.appbar.MaterialToolbar>
-
+-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -162,19 +164,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
-            android:text="새로고침" />
+            android:text="새로고침"
+            android:textSize="10sp"
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/button_main_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
-            android:text="저장" />
+            android:text="저장"
+            android:textSize="10sp"
+            android:layout_weight="1"/>
         <Button
             android:id="@+id/button_main_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="삭제" />
+            android:layout_marginRight="15dp"
+            android:text="삭제"
+            android:textSize="10sp"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/button_main_DB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="저장 리스트보기"
+            android:ellipsize="end"
+            android:textSize="10sp"
+            android:singleLine="true"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 

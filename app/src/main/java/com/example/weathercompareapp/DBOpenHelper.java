@@ -53,7 +53,9 @@ public class DBOpenHelper {
         mDB.close();
     }
 
+    //insert qurey
     public void insertColumn(String insertTime, String iconId, String temp, int differTemp) {
+        // 중복데이터 제외
         Cursor cursor = mDB.query(_TABLENAME0, new String[]{TIME}, null, null, null, null, null);
         boolean checkDB = false;
         while (cursor.moveToNext()) {
@@ -72,6 +74,7 @@ public class DBOpenHelper {
             mDB.insert(_TABLENAME0, null, values);
         }
     }
+    // delete query
     public void deleteAllColumns() {
         mDB.delete(DataBases.CreateDB._TABLENAME0, null, null);
     }

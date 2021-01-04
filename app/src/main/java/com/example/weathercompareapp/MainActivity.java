@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     Button button_requestJSON;
     Button button_save;
     Button button_delete;
+    Button button_move;
     ProgressDialog progressDialog;
     private String key = "96d98409169b4ef34c4529ad092f8471";
     private String curJSON;
@@ -86,14 +88,15 @@ public class MainActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        toolBar = (Toolbar) findViewById(R.id.toolBar_main);
-        setSupportActionBar(toolBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_reorder);
+//        toolBar = (Toolbar) findViewById(R.id.toolBar_main);
+//        setSupportActionBar(toolBar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_reorder);
 
         button_requestJSON = (Button) findViewById(R.id.button_main_requestJSON);  //button_main_requestjson 연결
         button_save = (Button) findViewById(R.id.button_main_save);
         button_delete = (Button) findViewById(R.id.button_main_delete);
+        button_move = (Button) findViewById(R.id.button_main_DB);
         textView_weather = (TextView) findViewById(R.id.textView_main_weather);
         textView_city = (TextView) findViewById(R.id.textView_main_city);
         textView_temp = (TextView) findViewById(R.id.textView_main_temp);
@@ -149,32 +152,39 @@ public class MainActivity extends AppCompatActivity {
                 mDBOpenHelper.deleteAllColumns();
             }
         });
+        button_move.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SubActivity.class);
+                startActivity(intent);
+            }
+        });
     }
-// menu 관련 코드
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-                Toast.makeText(getApplicationContext(), "환경설정 버튼 클릭됨", Toast.LENGTH_LONG).show();
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                Toast.makeText(getApplicationContext(), "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show();
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-//-----------
+//// menu 관련 코드
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater menuInflater = getMenuInflater();
+//        menuInflater.inflate(R.menu.menu, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.action_settings:
+//                // User chose the "Settings" item, show the app settings UI...
+//                Toast.makeText(getApplicationContext(), "환경설정 버튼 클릭됨", Toast.LENGTH_LONG).show();
+//                return true;
+//
+//            default:
+//                // If we got here, the user's action was not recognized.
+//                // Invoke the superclass to handle it.
+//                Toast.makeText(getApplicationContext(), "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show();
+//                return super.onOptionsItemSelected(item);
+//
+//        }
+//    }
+////-----------
     @Override
     protected void onStart() {
         super.onStart();
