@@ -90,11 +90,6 @@ public class MainActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-//        toolBar = (Toolbar) findViewById(R.id.toolBar_main);
-//        setSupportActionBar(toolBar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_reorder);
-
         button_requestJSON = (Button) findViewById(R.id.button_main_requestJSON);  //button_main_requestjson 연결
         button_save = (Button) findViewById(R.id.button_main_save);
         button_delete = (Button) findViewById(R.id.button_main_delete);
@@ -178,33 +173,6 @@ public class MainActivity extends AppCompatActivity {
 //
 //        getJSON();
 //    }
-
-
-//// menu 관련 코드
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater menuInflater = getMenuInflater();
-//        menuInflater.inflate(R.menu.menu, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.action_settings:
-//                // User chose the "Settings" item, show the app settings UI...
-//                Toast.makeText(getApplicationContext(), "환경설정 버튼 클릭됨", Toast.LENGTH_LONG).show();
-//                return true;
-//
-//            default:
-//                // If we got here, the user's action was not recognized.
-//                // Invoke the superclass to handle it.
-//                Toast.makeText(getApplicationContext(), "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show();
-//                return super.onOptionsItemSelected(item);
-//
-//        }
-//    }
-////-----------
 
     public void getJSON() {
         String curUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely&appid=" + key + "&lang=kr&units=metric";
@@ -364,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     public static Bitmap StringToBitmap(String encodedString) {
         try {
             byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);

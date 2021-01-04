@@ -11,6 +11,7 @@ public class SubActivity  extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub);
+
         ListAdapter adapter = new ListAdapter(this, R.layout.row_weather,  DBOpenHelper.SelectAllKids());
 
         ListView listView = findViewById(R.id.listView_sub);

@@ -84,6 +84,8 @@ public class DBOpenHelper {
         mDB.delete(DataBases.CreateDB._TABLENAME0, null, null);
     }
 
+
+    // select query
     public static ArrayList SelectAllKids() {
 
         String SELECT_QUERY = "SELECT * FROM " + _TABLENAME0;
@@ -95,6 +97,7 @@ public class DBOpenHelper {
         if (cur != null && cur.moveToFirst()) {
 
             do {
+                //쿼리문으로 가져온 데이터를 새로운 인스턴스에 저장하여 리턴
                 wData = new WeatherData();
                 wData.setTime(cur.getString(1));
                 wData.setIcon(cur.getString(2));

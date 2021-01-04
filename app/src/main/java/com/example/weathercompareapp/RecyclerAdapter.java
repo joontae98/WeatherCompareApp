@@ -54,7 +54,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
         holder.imageView_row_icon.setImageBitmap(weathers.getHourIcon());
         holder.textView_row_temp.setText(weathers.getHourTemp());
 
-        if (weathers.getCompTemp() >= 0 ) {
+        if (weathers.getCompTemp() >= 0) {
             holder.textView_row_compare.setTextColor(red);
         } else {
             holder.textView_row_compare.setTextColor(blue);

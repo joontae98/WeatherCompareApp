@@ -12,7 +12,6 @@ public class WeatherData implements Serializable {
     private String icon;
     private int compTemp;
 
-
     public int getCompTemp() {
         return compTemp;
     }
@@ -25,18 +24,16 @@ public class WeatherData implements Serializable {
         return icon;
     }
 
-
-    public void setIcon(String iconCode) {
-        this.icon = iconCode;
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
-
-
 
     public String getTime() {
         return time;
     }
 
-    public void setTime(String time) { this.time = time;
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getHourTemp() {
