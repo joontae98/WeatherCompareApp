@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
 
 import static com.example.weathercompareapp.DataBases.CreateDB.*;
 
@@ -16,6 +19,7 @@ public class DBOpenHelper {
     public static SQLiteDatabase mDB;
     private DatabaseHelper mDBHelper;
     private Context mCtx;
+    static WeatherData wData;
 
     private class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -74,9 +78,35 @@ public class DBOpenHelper {
             mDB.insert(_TABLENAME0, null, values);
         }
     }
+
     // delete query
     public void deleteAllColumns() {
         mDB.delete(DataBases.CreateDB._TABLENAME0, null, null);
+    }
+
+    public static ArrayList SelectAllKids() {
+
+        String SELECT_QUERY = "SELECT * FROM " + _TABLENAME0;
+
+        ArrayList weather_info = new ArrayList<WeatherData>();
+
+        Cursor cur = mDB.rawQuery(SELECT_QUERY, null);
+
+        if (cur != null && cur.moveToFirst()) {
+
+            do {
+                wData = new WeatherData();
+                wData.setTime(cur.getString(1));
+                wData.setIcon(cur.getString(2));
+                wData.setHourTemp(cur.getString(3));
+                wData.setCompTemp(cur.getInt(4));
+                weather_info.add(wData);
+                Log.d("저장","db -> list");
+            } while (cur.moveToNext());
+
+        }
+
+        return weather_info;
     }
 }
 

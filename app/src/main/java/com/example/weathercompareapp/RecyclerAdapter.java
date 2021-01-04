@@ -15,12 +15,8 @@ import static com.example.weathercompareapp.MainActivity.blue;
 import static com.example.weathercompareapp.MainActivity.red;
 
 //RecyclerView 연결 Adapter 클래스
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
     private List<WeatherData> mDataset;
-    private int curTemp;
-    private int lastTemp;
-    private int resultTemp;
-
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView textView_row_time;
@@ -37,13 +33,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
     }
 
-    public MyAdapter(List<WeatherData> myDataset) {                     //생성자 매서드
+    public RecyclerAdapter(List<WeatherData> myDataset) {                     //생성자 매서드
         mDataset = myDataset;
     }
 
     @Override
-    public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                                     int viewType) {
+    public RecyclerAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
+                                                           int viewType) {
         LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.row_weather, parent, false);
         MyViewHolder vh = new MyViewHolder(v);
@@ -57,10 +53,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.textView_row_time.setText(weathers.getTime());
         holder.imageView_row_icon.setImageBitmap(weathers.getHourIcon());
         holder.textView_row_temp.setText(weathers.getHourTemp());
-
-//        curTemp = parsing(weathers.getHourTemp());
-//        lastTemp = parsing(weathers.getLastTemp());
-//        resultTemp = (curTemp) - (lastTemp);
 
         if (weathers.getCompTemp() >= 0 ) {
             holder.textView_row_compare.setTextColor(red);
@@ -76,10 +68,4 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return mDataset == null ? 0 : mDataset.size();
     }
 
-    public int parsing(String str) {
-//        Log.d("들어온 값", str);
-        int parAfter = (int) Double.parseDouble(str);
-//        System.out.println("파싱 후 " + parAfter);
-        return parAfter;
-    }
 }

@@ -1,6 +1,5 @@
 package com.example.weathercompareapp;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,9 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,6 +37,7 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     //public static 변수들은 lastData 에서 사용하기 위해 public static 으로 선언
     public static final int LOAD_SUCCESS = 101;
     public static Bitmap curBit; //다른 클래스에서 사용하기 위해 public 선언
-    public static List<WeatherData> weathers = new ArrayList<>();
+    public static List<WeatherData> weathers;
     public static RecyclerView.Adapter mAdapter;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -76,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
     public static String address;
     public static int red;
     public static int blue;
+    private int curTemp;
+    private int lastTemp;
+    private int resultTemp;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -123,6 +125,12 @@ public class MainActivity extends AppCompatActivity {
         mDBOpenHelper.open();
         mDBOpenHelper.create();
 
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage("Please wait.....");
+        progressDialog.show();
+
+        getJSON();
+
         button_requestJSON.setOnClickListener(new View.OnClickListener() {               //버튼 클릭 시 onClick 실행
             @Override
             public void onClick(View v) {
@@ -141,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 for (int i = 1; i < weathers.size(); i++) {
                     WeatherData insertData = weathers.get(i);
-                    mDBOpenHelper.insertColumn(insertData.getTime(),insertData.getHourIcon().toString(),insertData.getHourTemp(),insertData.getCompTemp());
+                    mDBOpenHelper.insertColumn(insertData.getTime(), BitmapToString(insertData.getHourIcon()), insertData.getHourTemp(), insertData.getCompTemp());
                 }
 
             }
@@ -160,6 +168,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        progressDialog = new ProgressDialog(MainActivity.this);
+//        progressDialog.setMessage("Please wait.....");
+//        progressDialog.show();
+//
+//        getJSON();
+//    }
+
+
 //// menu 관련 코드
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -185,15 +205,6 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //    }
 ////-----------
-    @Override
-    protected void onStart() {
-        super.onStart();
-        progressDialog = new ProgressDialog(MainActivity.this);
-        progressDialog.setMessage("Please wait.....");
-        progressDialog.show();
-
-        getJSON();
-    }
 
     public void getJSON() {
         String curUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely&appid=" + key + "&lang=kr&units=metric";
@@ -203,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    weathers = new ArrayList<>();
                     CurrentData curData = new CurrentData();                //인스턴스 생성
                     curJSON = curData.getCurData(curUrl);
                     JSONObject obj = new JSONObject(curJSON);
@@ -216,9 +228,10 @@ public class MainActivity extends AppCompatActivity {
                         dt = Long.toString(Long.parseLong(hourObj.getString("dt")) - 86400);
                         String lastUrl = "http://api.openweathermap.org/data/2.5/onecall/timemachine?lat=" + lat + "&lon=" + lon + "&dt=" + dt + "&appid=" + key + "&units=metric";
                         weatherData = new WeatherData();
-                        weatherData.setTime(hourObj.getString("dt"));
+                        weatherData.setTime(getUTCTime(hourObj.getString("dt")));
                         weatherData.setHourTemp(hourObj.getString("temp"));
                         String hourBit = hourObj.getJSONArray("weather").getJSONObject(0).getString("icon");
+                        weatherData.setIcon(hourBit);
                         weatherData.setHourIcon(getBitmap(hourBit));
 
                         URL url = new URL(lastUrl);
@@ -241,7 +254,11 @@ public class MainActivity extends AppCompatActivity {
 //                        Log.d("두번째 API 호출", lastJSON);
                         JSONObject lastObj = new JSONObject(lastJSON);
                         temp = lastObj.getJSONObject("current").getString("temp");
-                        weatherData.setLastTemp(temp);
+
+                        curTemp = parsing(hourObj.getString("temp"));
+                        lastTemp = parsing(temp);
+                        resultTemp = (curTemp) - (lastTemp);
+                        weatherData.setCompTemp(resultTemp);
                         weathers.add(weatherData);
 
                         reader.close();
@@ -250,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Message message = mHandler.obtainMessage(LOAD_SUCCESS, curJSON);
                     mHandler.sendMessage(message);
-                    mAdapter = new MyAdapter(weathers);
+                    mAdapter = new RecyclerAdapter(weathers);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -258,6 +275,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         thread.start();
+    }
+
+    public static String getUTCTime(String time) {
+        // Unix 시간 -> UTC 시간 변환
+        long l = Long.parseLong(time);
+        Date date = new Date(l * 1000);
+        return date.toString().substring(0, 16);
     }
 
     //iconUrl -> Bitmap 변환 메서드
@@ -271,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
         InputStream is = iconConn.getInputStream();
         return BitmapFactory.decodeStream(is);
     }
+
     public String getCurrentAddress(double latitude, double longitude) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         List<Address> addresses;
@@ -338,5 +363,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+    public static Bitmap StringToBitmap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
+    public static String BitmapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 70, baos);
+        byte[] bytes = baos.toByteArray();
+        String temp = Base64.encodeToString(bytes, Base64.DEFAULT);
+        return temp;
+    }
+
+    public int parsing(String str) {
+//        Log.d("들어온 값", str);
+        int parAfter = (int) Double.parseDouble(str);
+//        System.out.println("파싱 후 " + parAfter);
+        return parAfter;
     }
 }
