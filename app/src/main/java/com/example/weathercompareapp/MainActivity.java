@@ -6,7 +6,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -18,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -79,28 +82,30 @@ public class MainActivity extends AppCompatActivity {
     private int lastTemp;
     private int resultTemp;
 
+    String TAG = "MainActivity";
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView_main);
+        recyclerView = (RecyclerView) findViewById(R.id.view_main_recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        button_requestJSON = (Button) findViewById(R.id.button_main_requestJSON);  //button_main_requestjson 연결
-        button_save = (Button) findViewById(R.id.button_main_save);
-        button_delete = (Button) findViewById(R.id.button_main_delete);
-        button_move = (Button) findViewById(R.id.button_main_DB);
-        textView_weather = (TextView) findViewById(R.id.textView_main_weather);
-        textView_city = (TextView) findViewById(R.id.textView_main_city);
-        textView_temp = (TextView) findViewById(R.id.textView_main_temp);
-        textView_humidity = (TextView) findViewById(R.id.textView_main_humidity);
-        textView_tempMin = (TextView) findViewById(R.id.textView_main_temp_min);
-        textView_tempMax = (TextView) findViewById(R.id.textView_main_temp_max);
-        imageView_icon = (ImageView) findViewById(R.id.imageView_main_icon);
+        button_requestJSON = (Button) findViewById(R.id.btn_main_requestJSON);  //button_main_requestjson 연결
+        button_save = (Button) findViewById(R.id.btn_main_save);
+        button_delete = (Button) findViewById(R.id.btn_main_delete);
+        button_move = (Button) findViewById(R.id.btn_main_DB);
+        textView_weather = (TextView) findViewById(R.id.view_main_weather);
+        textView_city = (TextView) findViewById(R.id.view_main_city);
+        textView_temp = (TextView) findViewById(R.id.view_main_temp);
+        textView_humidity = (TextView) findViewById(R.id.view_main_humidity);
+        textView_tempMin = (TextView) findViewById(R.id.view_main_temp_min);
+        textView_tempMax = (TextView) findViewById(R.id.view_main_temp_max);
+        imageView_icon = (ImageView) findViewById(R.id.view_main_icon);
 
         textView_weather.setSelected(true);
         textView_city.setSelected(true);
@@ -122,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setMessage("Please wait.....");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         getJSON();
@@ -132,9 +139,13 @@ public class MainActivity extends AppCompatActivity {
 
                 progressDialog = new ProgressDialog(MainActivity.this);
                 progressDialog.setMessage("Please wait.....");
+                progressDialog.setCanceledOnTouchOutside(false);            //다른 화면 터치 X
+                progressDialog.setCancelable(false);                        //뒤로가기 버튼 터치 X
                 progressDialog.show();
 
                 getJSON();
+
+                Log.e(TAG, "asdfasdfasdfadsf");
 
             }
         });
@@ -152,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         button_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDBOpenHelper.deleteAllColumns();
+                showMessage();
             }
         });
         button_move.setOnClickListener(new View.OnClickListener() {
@@ -162,6 +173,31 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+    }
+
+    private void showMessage() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("삭제").setMessage("삭제하시겠습니까?");
+
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mDBOpenHelper.deleteAllColumns();
+            }
+        });
+
+        builder.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+
+        alertDialog.show();
     }
 
 //    @Override

@@ -26,10 +26,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
 
         public MyViewHolder(View v) {
             super(v);
-            textView_row_time = v.findViewById(R.id.textView_row_time);
-            imageView_row_icon = v.findViewById(R.id.imageView_row_icon);
-            textView_row_temp = v.findViewById(R.id.textView_row_temp);
-            textView_row_compare = v.findViewById(R.id.textView_row_compare);
+            textView_row_time = v.findViewById(R.id.view_row_time);
+            imageView_row_icon = v.findViewById(R.id.view_row_icon);
+            textView_row_temp = v.findViewById(R.id.view_row_temp);
+            textView_row_compare = v.findViewById(R.id.view_row_compare);
         }
     }
 

@@ -3,23 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-<!--
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolBar_main"
-        app:titleTextColor="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        >
-    </com.google.android.material.appbar.MaterialToolbar>
--->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -27,18 +13,18 @@
         android:layout_weight="0.3">
 
         <LinearLayout
-            android:id="@+id/linearlayout_main_icon_weather"
+            android:id="@+id/layout_main_icon_weahter"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/imageView_main_icon"
+                android:id="@+id/view_main_icon"
                 android:layout_width="150dp"
                 android:layout_height="130dp" />
 
             <TextView
-                android:id="@+id/textView_main_weather"
+                android:id="@+id/view_main_weather"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ellipsize="marquee"
@@ -51,15 +37,15 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearlayout_main_city_temp"
+            android:id="@+id/layout_main_city_temp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/linearlayout_main_icon_weather"
+            android:layout_toRightOf="@+id/layout_main_icon_weahter"
             android:gravity="center"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView_main_city"
+                android:id="@+id/view_main_city"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="3"
@@ -98,7 +84,7 @@
                 android:layout_weight="3">
 
                 <TextView
-                    android:id="@+id/textView_main_temp"
+                    android:id="@+id/view_main_temp"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -107,7 +93,7 @@
                     android:textSize="30sp" />
 
                 <TextView
-                    android:id="@+id/textView_main_humidity"
+                    android:id="@+id/view_main_humidity"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -117,7 +103,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/textView_main_temp_max"
+                android:id="@+id/view_main_temp_max"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -126,7 +112,7 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/textView_main_temp_min"
+                android:id="@+id/view_main_temp_min"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -139,7 +125,7 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_main"
+        android:id="@+id/view_main_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginLeft="15dp"
@@ -157,10 +143,11 @@
         android:layout_marginBottom="15dp"
         android:layout_marginHorizontal="15dp"
         android:gravity="center"
+        android:weightSum="4"
         >
 
         <Button
-            android:id="@+id/button_main_requestJSON"
+            android:id="@+id/btn_main_requestJSON"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
@@ -169,7 +156,7 @@
             android:layout_weight="1"/>
 
         <Button
-            android:id="@+id/button_main_save"
+            android:id="@+id/btn_main_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
@@ -177,7 +164,7 @@
             android:textSize="10sp"
             android:layout_weight="1"/>
         <Button
-            android:id="@+id/button_main_delete"
+            android:id="@+id/btn_main_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
@@ -185,7 +172,7 @@
             android:textSize="10sp"
             android:layout_weight="1"/>
         <Button
-            android:id="@+id/button_main_DB"
+            android:id="@+id/btn_main_DB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="저장 리스트보기"

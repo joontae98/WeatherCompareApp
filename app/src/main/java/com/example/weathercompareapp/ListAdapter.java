@@ -37,10 +37,10 @@ public class ListAdapter extends ArrayAdapter {
 
         }
 
-        TextView row_time = convertView.findViewById(R.id.textView_row_time);
-        ImageView row_icon = convertView.findViewById(R.id.imageView_row_icon);
-        TextView row_temp = convertView.findViewById(R.id.textView_row_temp);
-        TextView row_compare = convertView.findViewById(R.id.textView_row_compare);
+        TextView row_time = convertView.findViewById(R.id.view_row_time);
+        ImageView row_icon = convertView.findViewById(R.id.view_row_icon);
+        TextView row_temp = convertView.findViewById(R.id.view_row_temp);
+        TextView row_compare = convertView.findViewById(R.id.view_row_compare);
 
         WeatherData list_view_item = (WeatherData) getItem(position);
 

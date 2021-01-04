@@ -14,7 +14,7 @@ public class SubActivity  extends AppCompatActivity {
 
         ListAdapter adapter = new ListAdapter(this, R.layout.row_weather,  DBOpenHelper.SelectAllKids());
 
-        ListView listView = findViewById(R.id.listView_sub);
+        ListView listView = findViewById(R.id.view_sub_listView);
 
         listView.setAdapter(adapter);
     }
